@@ -137,8 +137,8 @@ def main():
         textstr = '\n'.join((
             r'$\mu=%.2f$' % (data_diff.mean(), ),
             r'$\mathrm{median}=%.2f$' % (data_diff.median(), ),
-            r'$\sigma=%.2f$' % (data_diff.std(), ),
-            r'$\frac{\sigma}{\mu}=%.2f$'% (data_diff.std()*100/data_diff.mean(), )+'%'))
+            r'$\sigma=%.2f$' % (data_diff.std(), )
+            ))
 
         ax.text(0.1, 0.95, textstr, 
                     horizontalalignment='center', 
@@ -216,9 +216,11 @@ def main():
 
     performance_columns = [
         'strategyReturn', 'holdToken0Return',
-       'holdToken1Return', 'hold5050Return',
-       'vsConstantRatio', 'vs5050',
-       'vsHoldToken0', 'vsHoldToken1']
+        'holdToken1Return', 'hold5050Return',
+        'vsConstantRatio', 'vs5050',
+        'vsHoldToken0', 'vsHoldToken1']
+    
+    df_returns['harvest_return'] = df_harvests.daily_apr.cumsum().loc[df_returns.index]
     
     st.line_chart(df_returns[performance_columns])
     st.subheader('Strategy Return: Risk/Return Metrics')
@@ -226,7 +228,11 @@ def main():
     st.subheader('Distribution of Daily Strategy Return')
     plot_histogram(df_returns)
 
+    st.subheader('Historical and Daily Accumulated APR')
     st.line_chart(df_harvests[['apr','accum_apr']])
+
+    st.subheader('Strategy Return vs Daily Accumulated APR')
+    st.line_chart(df_returns[['harvest_return','strategyReturn']])
 
 if __name__ == '__main__':
     main()
